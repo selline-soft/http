@@ -4,7 +4,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Selline\Http\Traits\MessageInternalTrait;
 use Selline\Http\Traits\RequestInternalTrait;
 
-class ServerRequest implements ServerRequestInterface
+final class ServerRequest implements ServerRequestInterface
 {
     use MessageInternalTrait;
     use RequestInternalTrait;
