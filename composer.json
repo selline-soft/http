@@ -14,7 +14,9 @@
     }
   },
   "require": {
-    "psr/http-message": "dev-master"
+    "psr/http-message": "^1.0",
+    "php-http/message-factory": "^1.0",
+    "psr/http-factory": "^1.0"
   },
   "require-dev": {
     "vimeo/psalm": "^4.6",
