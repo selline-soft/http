@@ -5,10 +5,21 @@
          colors="true"
 >
     <testsuites>
-        <testsuite name="Container">
+        <testsuite name="Unit">
             <directory suffix="Test.php">./tests</directory>
         </testsuite>
+        <testsuite name="Integration">
+            <directory>./vendor/http-interop/http-factory-tests/test</directory>
+        </testsuite>
     </testsuites>
+    <php>
+        <const name="REQUEST_FACTORY" value="Selline\Http\Factory"/>
+        <const name="RESPONSE_FACTORY" value="Selline\Http\Factory"/>
+        <const name="SERVER_REQUEST_FACTORY" value="Selline\Http\Factory"/>
+        <const name="UPLOADED_FILE_FACTORY" value="Selline\Http\Factory"/>
+        <const name="URI_FACTORY" value="Selline\Http\Factory"/>
+        <const name="STREAM_FACTORY" value="Selline\Http\Factory"/>
+    </php>
     <coverage processUncoveredFiles="true">
         <include>
             <directory suffix=".php">./src</directory>

@@ -20,7 +20,9 @@
   },
   "require-dev": {
     "vimeo/psalm": "^4.6",
-    "phpunit/phpunit": "^9.5"
+    "phpunit/phpunit": "^9.5",
+    "php-http/psr7-integration-tests": "^1.0",
+    "http-interop/http-factory-tests": "^0.8"
   },
   "autoload-dev": {
     "psr-4": {
