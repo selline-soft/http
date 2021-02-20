@@ -1,6 +1,9 @@
 <?php
 namespace Selline\Http;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\StreamInterface;
+use Psr\Http\Message\UploadedFileInterface;
+use Psr\Http\Message\UriInterface;
 use Selline\Http\Traits\MessageInternalTrait;
 use Selline\Http\Traits\RequestInternalTrait;
 
@@ -9,68 +12,147 @@ final class ServerRequest implements ServerRequestInterface
     use MessageInternalTrait;
     use RequestInternalTrait;
 
-    public function getServerParams()
+    /** @var array */
+    private $attributes = [];
+
+    /** @var array */
+    private $cookieParams = [];
+
+    /** @var array|object|null */
+    private $parsedBody;
+
+    /** @var array */
+    private $queryParams = [];
+
+    /** @var array */
+    private $serverParams;
+
+    /** @var UploadedFileInterface[] */
+    private $uploadedFiles = [];
+
+    /**
+     * @param string $method HTTP method
+     * @param string|UriInterface $uri URI
+     * @param array $headers Request headers
+     * @param string|resource|StreamInterface|null $body Request body
+     * @param string $version Protocol version
+     * @param array $serverParams Typically the $_SERVER superglobal
+     */
+    public function __construct(string $method, $uri, array $headers = [], $body = null, string $version = '1.1', array $serverParams = [])
     {
-        // TODO: Implement getServerParams() method.
+        $this->serverParams = $serverParams;
+
+        if (!($uri instanceof UriInterface)) {
+            $uri = new Uri($uri);
+        }
+
+        $this->method = $method;
+        $this->uri = $uri;
+        $this->setHeaders($headers);
+        $this->protocol = $version;
+
+        if (!$this->hasHeader('Host')) {
+            $this->updateHostFromUri();
+        }
+
+        // If we got no body, defer initialization of the stream until ServerRequest::getBody()
+        if ('' !== $body && null !== $body) {
+            $this->stream = Stream::create($body);
+        }
     }
 
-    public function getCookieParams()
+    public function getServerParams(): array
     {
-        // TODO: Implement getCookieParams() method.
+        return $this->serverParams;
     }
 
-    public function withCookieParams(array $cookies)
+    public function getUploadedFiles(): array
     {
-        // TODO: Implement withCookieParams() method.
-    }
-
-    public function getQueryParams()
-    {
-        // TODO: Implement getQueryParams() method.
-    }
-
-    public function withQueryParams(array $query)
-    {
-        // TODO: Implement withQueryParams() method.
-    }
-
-    public function getUploadedFiles()
-    {
-        // TODO: Implement getUploadedFiles() method.
+        return $this->uploadedFiles;
     }
 
     public function withUploadedFiles(array $uploadedFiles)
     {
-        // TODO: Implement withUploadedFiles() method.
+        $new = clone $this;
+        $new->uploadedFiles = $uploadedFiles;
+
+        return $new;
+    }
+
+    public function getCookieParams(): array
+    {
+        return $this->cookieParams;
+    }
+
+    public function withCookieParams(array $cookies)
+    {
+        $new = clone $this;
+        $new->cookieParams = $cookies;
+
+        return $new;
+    }
+
+    public function getQueryParams(): array
+    {
+        return $this->queryParams;
+    }
+
+    public function withQueryParams(array $query)
+    {
+        $new = clone $this;
+        $new->queryParams = $query;
+
+        return $new;
     }
 
     public function getParsedBody()
     {
-        // TODO: Implement getParsedBody() method.
+        return $this->parsedBody;
     }
 
     public function withParsedBody($data)
     {
-        // TODO: Implement withParsedBody() method.
+        if (!\is_array($data) && !\is_object($data) && null !== $data) {
+            throw new \InvalidArgumentException('First parameter to withParsedBody MUST be object, array or null');
+        }
+
+        $new = clone $this;
+        $new->parsedBody = $data;
+
+        return $new;
     }
 
-    public function getAttributes()
+    public function getAttributes(): array
     {
-        // TODO: Implement getAttributes() method.
+        return $this->attributes;
     }
 
-    public function getAttribute($name, $default = null)
+    public function getAttribute($attribute, $default = null)
     {
-        // TODO: Implement getAttribute() method.
+        if (false === \array_key_exists($attribute, $this->attributes)) {
+            return $default;
+        }
+
+        return $this->attributes[$attribute];
     }
 
-    public function withAttribute($name, $value)
+    public function withAttribute($attribute, $value): self
     {
-        // TODO: Implement withAttribute() method.
+        $new = clone $this;
+        $new->attributes[$attribute] = $value;
+
+        return $new;
     }
 
-    public function withoutAttribute($name)
+    public function withoutAttribute($attribute): self
     {
-        // TODO: Implement withoutAttribute() method.
+        if (false === \array_key_exists($attribute, $this->attributes)) {
+            return $this;
+        }
+
+        $new = clone $this;
+        unset($new->attributes[$attribute]);
+
+        return $new;
     }
 }
