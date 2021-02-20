@@ -262,6 +262,9 @@ final class Uri implements UriInterface
     /**
      * @param array|string $path
      * @return string
+     * @throws InvalidArgumentException
+     *
+     * @todo метод должен принимать только строки
      */
     private function filterPath(array|string $path): string
     {
@@ -276,6 +279,8 @@ final class Uri implements UriInterface
      * @param string|array $str
      * @return string
      * @throws InvalidArgumentException
+     *
+     * @todo убрать дублтрование с filterPath()
      */
     private function filterQueryAndFragment(string|array $str): string
     {
