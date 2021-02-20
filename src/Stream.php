@@ -89,30 +89,13 @@ final class Stream implements StreamInterface
     /**
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
-        try {
-            if ($this->isSeekable()) {
-                $this->seek(0);
-            }
-
-            return $this->getContents();
-        } catch (\Throwable $e) {
-            if (\PHP_VERSION_ID >= 70400) {
-                throw $e;
-            }
-
-            if (\is_array($errorHandler = \set_error_handler('var_dump'))) {
-                $errorHandler = $errorHandler[0] ?? null;
-            }
-            \restore_error_handler();
-
-            if ($e instanceof \Error || $errorHandler instanceof SymfonyErrorHandler || $errorHandler instanceof SymfonyLegacyErrorHandler) {
-                return \trigger_error((string) $e, \E_USER_ERROR);
-            }
-
-            return '';
+        if ($this->isSeekable()) {
+            $this->seek(0);
         }
+
+        return $this->getContents();
     }
 
     public function close(): void
