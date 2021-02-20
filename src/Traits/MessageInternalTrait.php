@@ -2,6 +2,7 @@
 namespace Selline\Http\Traits;
 use Psr\Http\Message\StreamInterface;
 use Selline\Http\Stream;
+use Selline\Http\Exceptions\InvalidArgumentException;
 
 /**
  * Trait MessageInternalTrait
@@ -87,7 +88,7 @@ trait MessageInternalTrait
     public function withAddedHeader($header, $value): self
     {
         if (!\is_string($header) || '' === $header) {
-            throw new \InvalidArgumentException('Header name must be an RFC 7230 compatible string.');
+            throw new InvalidArgumentException('Header name must be an RFC 7230 compatible string.');
         }
 
         $new = clone $this;
@@ -172,27 +173,27 @@ trait MessageInternalTrait
     private function validateAndTrimHeader($header, $values): array
     {
         if (!\is_string($header) || 1 !== \preg_match("@^[!#$%&'*+.^_`|~0-9A-Za-z-]+$@", $header)) {
-            throw new \InvalidArgumentException('Header name must be an RFC 7230 compatible string.');
+            throw new InvalidArgumentException('Header name must be an RFC 7230 compatible string.');
         }
 
         if (!\is_array($values)) {
             // This is simple, just one value.
             if ((!\is_numeric($values) && !\is_string($values)) || 1 !== \preg_match("@^[ \t\x21-\x7E\x80-\xFF]*$@", (string) $values)) {
-                throw new \InvalidArgumentException('Header values must be RFC 7230 compatible strings.');
+                throw new InvalidArgumentException('Header values must be RFC 7230 compatible strings.');
             }
 
             return [\trim((string) $values, " \t")];
         }
 
         if (empty($values)) {
-            throw new \InvalidArgumentException('Header values must be a string or an array of strings, empty array given.');
+            throw new InvalidArgumentException('Header values must be a string or an array of strings, empty array given.');
         }
 
         // Assert Non empty array
         $returnValues = [];
         foreach ($values as $v) {
             if ((!\is_numeric($v) && !\is_string($v)) || 1 !== \preg_match("@^[ \t\x21-\x7E\x80-\xFF]*$@", (string) $v)) {
-                throw new \InvalidArgumentException('Header values must be RFC 7230 compatible strings.');
+                throw new InvalidArgumentException('Header values must be RFC 7230 compatible strings.');
             }
 
             $returnValues[] = \trim((string) $v, " \t");

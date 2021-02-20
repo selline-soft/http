@@ -1,6 +1,7 @@
 <?php
 namespace Selline\Http\Traits;
 use Psr\Http\Message\UriInterface;
+use Selline\Http\Exceptions\InvalidArgumentException;
 
 /**
  * Trait RequestInternalTrait
@@ -40,7 +41,7 @@ trait RequestInternalTrait
     public function withRequestTarget($requestTarget): self
     {
         if (\preg_match('#\s#', $requestTarget)) {
-            throw new \InvalidArgumentException('Invalid request target provided; cannot contain whitespace');
+            throw new InvalidArgumentException('Invalid request target provided; cannot contain whitespace');
         }
 
         $new = clone $this;
@@ -57,7 +58,7 @@ trait RequestInternalTrait
     public function withMethod($method): self
     {
         if (!\is_string($method)) {
-            throw new \InvalidArgumentException('Method must be a string');
+            throw new InvalidArgumentException('Method must be a string');
         }
 
         $new = clone $this;

@@ -19,7 +19,7 @@ final class Uri implements UriInterface
     ){
         if ('' !== $this->sourceUri) {
             if (false === $parts = parse_url($this->sourceUri)) {
-                throw new InvalidArgumentException(sprintf("Unable to parse URI %s", $this->sourceUri));
+                throw new InvalidArgumentException(sprintf("Unable to parse URI: %s", $this->sourceUri));
             }
             $this->applyUriParts($parts);
         }
