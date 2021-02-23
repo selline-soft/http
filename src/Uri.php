@@ -15,11 +15,11 @@ final class Uri implements UriInterface
      * @throws InvalidArgumentException
      */
     public function __construct(
-        private string $sourceUri = ''
+        string $sourceUri = ''
     ){
-        if ('' !== $this->sourceUri) {
-            if (false === $parts = parse_url($this->sourceUri)) {
-                throw new InvalidArgumentException(sprintf("Unable to parse URI: %s", $this->sourceUri));
+        if ('' !== $sourceUri) {
+            if (false === $parts = parse_url($sourceUri)) {
+                throw new InvalidArgumentException(sprintf("Unable to parse URI: %s", $sourceUri));
             }
             $this->applyUriParts($parts);
         }
